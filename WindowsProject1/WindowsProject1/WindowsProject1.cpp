@@ -4,6 +4,7 @@
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AddItem(HWND hwnd);
+void RemoveItem(HWND hwnd);
 
 std::vector<std::wstring> items;
 
@@ -50,7 +51,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    static HWND hEdit, hButton, hListBox;
+    static HWND hEdit, hButton, hButton2, hListBox;
 
     switch (uMsg) {
     case WM_CREATE: {
@@ -62,6 +63,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
             240, 20, 100, 25, hwnd, (HMENU)IDC_MAIN_BUTTON, GetModuleHandle(NULL), NULL);
 
+        hButton2 = CreateWindowEx(0, L"BUTTON", L"Remove Item",
+            WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+            340, 20, 100, 25, hwnd, (HMENU)IDC_MAIN_BUTTON, GetModuleHandle(NULL), NULL);
+
         hListBox = CreateWindowEx(WS_EX_CLIENTEDGE, L"LISTBOX", NULL,
             WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL,
             20, 60, 320, 200, hwnd, (HMENU)IDC_MAIN_LISTBOX, GetModuleHandle(NULL), NULL);
@@ -71,8 +76,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         switch (LOWORD(wParam)) {
         case IDC_MAIN_BUTTON:
             AddItem(hwnd);
+            RemoveItem(hwnd);
             break;
         }
+
+       
         break;
     case WM_DESTROY:
         PostQuitMessage(0);
@@ -96,4 +104,17 @@ void AddItem(HWND hwnd) {
     }
 }
 
+void RemoveItem(HWND hwnd) { //tahnks nick
+    HWND hEdit = GetDlgItem(hwnd, IDC_MAIN_EDIT);
+    HWND hListBox = GetDlgItem(hwnd, IDC_MAIN_LISTBOX);
 
+int iCurSel = SendMessage(hListBox, LB_GETCURSEL, 0, 0);
+    for (int i = 0; i < items.size(); i++) {
+        if (i == iCurSel) {
+            items.erase(items.begin() + i);
+            
+            SendMessage(hListBox, LB_DELETESTRING, iCurSel, 0);
+        }
+    }
+
+}
