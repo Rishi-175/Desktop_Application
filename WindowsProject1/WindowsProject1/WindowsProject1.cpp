@@ -13,7 +13,7 @@ void RemoveItem(HWND hwnd);
 // setting up vector of items
 std::vector<std::wstring> items;
 
-//
+// define the input type button thingy
 #define IDC_MAIN_EDIT 101
 #define IDC_MAIN_BUTTON 102
 #define IDC_MAIN_LISTBOX 103
